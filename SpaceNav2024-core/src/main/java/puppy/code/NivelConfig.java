@@ -9,7 +9,7 @@ public class NivelConfig
 	//ATRIBUTOS
 	private int cantBasicos;
     private int cantMedios;
-    private int cantElite;
+    private int cantAlto;
     private boolean tieneBoss;
     private int vidaBoss;
     private int velocidadBase;
@@ -19,7 +19,7 @@ public class NivelConfig
     public NivelConfig() {
         cantBasicos = 0;
         cantMedios = 0;
-        cantElite = 0;
+        cantAlto = 0;
         tieneBoss = false;
         vidaBoss = 30;
         velocidadBase = 1;
@@ -29,7 +29,7 @@ public class NivelConfig
     //Getters
     public int getCantBasicos() { return cantBasicos; }
     public int getCantMedios() { return cantMedios; }
-    public int getCantElite() { return cantElite; }
+    public int getCantAlto() { return cantAlto; }
     public boolean isTieneBoss() { return tieneBoss; }
     public int getVidaBoss() { return vidaBoss; }
     public int getVelocidadBase() { return velocidadBase; }
@@ -38,7 +38,7 @@ public class NivelConfig
     //Setters (solo NivelBuilder los llama)
     void setCantBasicos(int n) { this.cantBasicos = n; }
     void setCantMedios(int n) { this.cantMedios  = n; }
-    void setCantElite(int n) { this.cantElite   = n; }
+    void setCantAlto(int n) { this.cantAlto   = n; }
     void setTieneBoss(boolean b) { this.tieneBoss   = b; }
     void setVidaBoss(int v) { this.vidaBoss    = v; }
     void setVelocidadBase(int v) { this.velocidadBase = v; }
@@ -49,7 +49,7 @@ public class NivelConfig
     {
         return String.format(
             "NivelConfig[basicos=%d, medios=%d, elite=%d, boss=%b(%d HP), vel=%d]",
-            cantBasicos, cantMedios, cantElite, tieneBoss, vidaBoss, velocidadBase
+            cantBasicos, cantMedios, cantAlto, tieneBoss, vidaBoss, velocidadBase
         );
     }
 }

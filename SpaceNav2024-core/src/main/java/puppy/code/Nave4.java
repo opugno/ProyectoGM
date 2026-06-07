@@ -13,7 +13,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 /**
  * Nave del jugador
- * Extiende GameObject (template method) e implementa Disparable (strategy)
+ * Extiende de GameObject (template method) e implementa Disparable (strategy)
  * Usa GameManager para vidas, escudo y nivel de disparo (singleton).
  */
 public class Nave4 extends GameObject implements Disparable

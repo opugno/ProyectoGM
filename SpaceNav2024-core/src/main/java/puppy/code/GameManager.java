@@ -116,4 +116,43 @@ public class GameManager
     
     //UPGRADES/POWER-UPS
     
+    //Upgrade, subir el nivel del disparo
+    public void subirNivelDisparo()
+    {
+    	if (nivelDisparo < 6) nivelDisparo++;
+    }
+    
+    //Powerup de activar escudo
+    public void activarEscudo()
+    {
+    	escudoActivo = true;
+    }
+    
+    //PowerUp un disparo mas fuerte
+    public void activarDisparoFuerto(float duracion)
+    {
+    	disparoFuerteActivo = true;
+    	tiempoDisparoFuerte = duracion;
+    }
+    
+    //PowerUp un disparo especial
+    public void activarDisparoEspecial(float duracion)
+    {
+    	disparoEspecialActivo = true;
+    	tiempoDisparoEspecial = duracion;
+    }
+    
+    /** Actualizar temporizadores de Powerups. */
+    public void actualizarTimers(float delta) 
+    {
+        if (disparoFuerteActivo) 
+        {
+            tiempoDisparoFuerte -= delta;
+            if (tiempoDisparoFuerte <= 0) disparoFuerteActivo = false;
+        }
+        if (disparoEspecialActivo) 
+        {
+            tiempoDisparoEspecial -= delta;
+            if (tiempoDisparoEspecial <= 0) disparoEspecialActivo = false;
+        }
 }

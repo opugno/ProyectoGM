@@ -37,7 +37,7 @@ public class NivelBuilder
     /** Agrega enemigos alto (100pts, disparo triple, sinusoidal). */
     public NivelBuilder conElite(int cantidad) 
     {
-        config.setCantElite(cantidad);
+        config.setCantAlto(cantidad);
         return this;
     }
     

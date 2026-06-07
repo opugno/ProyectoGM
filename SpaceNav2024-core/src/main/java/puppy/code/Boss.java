@@ -17,7 +17,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
  */
 public class Boss extends Enemigo implements Disparable
 {
-	 // Fases de ataque
+	private float baseX;
+	private boolean moviendoDerecha = true;
+	private float limiteIzq;
+	private float limiteDer;
+	
+    // Fases de ataque
     private EstrategiaDisparo estrategiaActual;
     private int faseAtaque = 0; // cambia segun la vida restante
  

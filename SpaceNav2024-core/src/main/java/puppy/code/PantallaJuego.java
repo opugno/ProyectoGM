@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 /**
  * Pantalla principal del juego, modificada para usar:
@@ -297,7 +298,7 @@ public class PantallaJuego implements Screen
                     {
                         gm.agregarPuntos(e.getPuntos());
                         // incrementar barra de poder segun tipo
-                        float incremento = (e instanceof EnemigoElite || e instanceof Boss) ? 0.20f
+                        float incremento = (e instanceof EnemigoAlto || e instanceof Boss) ? 0.20f
                                          : (e instanceof EnemigoMedio) ? 0.10f : 0.05f;
                         gm.incrementarBarra(incremento);
                         // Drop de poweup

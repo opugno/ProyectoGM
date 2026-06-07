@@ -3,8 +3,8 @@ package puppy.code;
 import java.util.ArrayList;
 import com.badlogic.gdx.graphics.Texture;
  
-/** Upgrade 2: 3 balas en abanico (izquierda, centro, derecha). */
-public class DisparoTriple implements EstrategiaDisparo
+/** Upgrade 2: 4 balas en abanico (izquierda, centro, derecha). */
+public class DisparoCuadruple implements EstrategiaDisparo
 {
 	@Override
     public ArrayList<Bullet> crear(float x, float y, Texture txBala, boolean esEnemiga) 

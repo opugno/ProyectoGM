@@ -49,4 +49,4 @@ public class EnemigoMedio extends Enemigo
         return PowerUp.TipoPowerUp.UPGRADE_DISPARO;
     }
 }
-}
+

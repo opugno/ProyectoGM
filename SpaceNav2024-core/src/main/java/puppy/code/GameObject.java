@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Rectangle;
 /**
  * GM-8: Patrón Template Method
  */
-public class GameObject 
+public abstract class GameObject 
 {
 	protected Sprite spr;
     protected boolean destroyed = false;

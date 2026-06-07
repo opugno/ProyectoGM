@@ -155,4 +155,23 @@ public class GameManager
             tiempoDisparoEspecial -= delta;
             if (tiempoDisparoEspecial <= 0) disparoEspecialActivo = false;
         }
+    }
+    
+    //GETTERS
+    public int getScore() { return score; }
+    public int getHighScore() { return highScore; }
+    public int getNivelActual() { return nivelActual; }
+    public int getVidas() { return vidas; }
+    public float getBarraPoder() { return barraPoder; }
+    public int getNivelDisparo() { return nivelDisparo; }
+    public boolean isEscudoActivo() { return escudoActivo; }
+    public boolean isDisparoFuerteActivo() { return disparoFuerteActivo; }
+    public boolean isDisparoEspecialActivo() { return disparoEspecialActivo; }
+    public boolean isBarraPoderLista() { return barraPoderLista; }
+ 
+    // Setter manual de highScore para persistencia entre las partidas
+    public void setHighScore(int hs) 
+    {
+        if (hs > highScore) highScore = hs;
+    }
 }

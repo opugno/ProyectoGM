@@ -129,7 +129,7 @@ public class GameManager
     }
     
     //PowerUp un disparo mas fuerte
-    public void activarDisparoFuerto(float duracion)
+    public void activarDisparoFuerte(float duracion)
     {
     	disparoFuerteActivo = true;
     	tiempoDisparoFuerte = duracion;

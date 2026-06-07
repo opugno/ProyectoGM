@@ -17,32 +17,32 @@ public class NivelConfig
     
     //Constructor con valores inicializados
     public NivelConfig() {
-        cantBasicos               = 0;
-        cantMedios                = 0;
-        cantElite                 = 0;
-        tieneBoss                 = false;
-        vidaBoss                  = 30;
-        velocidadBase             = 1;
-        intervaloDisparoEnemigos  = 3.0f;
+        cantBasicos = 0;
+        cantMedios = 0;
+        cantElite = 0;
+        tieneBoss = false;
+        vidaBoss = 30;
+        velocidadBase = 1;
+        intervaloDisparoEnemigos = 3.0f;
     }
 
- // ═══ Getters ═══
-    public int getCantBasicos()              { return cantBasicos; }
-    public int getCantMedios()               { return cantMedios; }
-    public int getCantElite()                { return cantElite; }
-    public boolean isTieneBoss()             { return tieneBoss; }
-    public int getVidaBoss()                 { return vidaBoss; }
-    public int getVelocidadBase()            { return velocidadBase; }
-    public float getIntervaloDisparo()       { return intervaloDisparoEnemigos; }
+    //Getters
+    public int getCantBasicos() { return cantBasicos; }
+    public int getCantMedios() { return cantMedios; }
+    public int getCantElite() { return cantElite; }
+    public boolean isTieneBoss() { return tieneBoss; }
+    public int getVidaBoss() { return vidaBoss; }
+    public int getVelocidadBase() { return velocidadBase; }
+    public float getIntervaloDisparo() { return intervaloDisparoEnemigos; }
  
-    // ═══ Setters (solo NivelBuilder los llama) ═══
-    void setCantBasicos(int n)               { this.cantBasicos = n; }
-    void setCantMedios(int n)                { this.cantMedios  = n; }
-    void setCantElite(int n)                 { this.cantElite   = n; }
-    void setTieneBoss(boolean b)             { this.tieneBoss   = b; }
-    void setVidaBoss(int v)                  { this.vidaBoss    = v; }
-    void setVelocidadBase(int v)             { this.velocidadBase = v; }
-    void setIntervaloDisparo(float t)        { this.intervaloDisparoEnemigos = t; }
+    //Setters (solo NivelBuilder los llama)
+    void setCantBasicos(int n) { this.cantBasicos = n; }
+    void setCantMedios(int n) { this.cantMedios  = n; }
+    void setCantElite(int n) { this.cantElite   = n; }
+    void setTieneBoss(boolean b) { this.tieneBoss   = b; }
+    void setVidaBoss(int v) { this.vidaBoss    = v; }
+    void setVelocidadBase(int v) { this.velocidadBase = v; }
+    void setIntervaloDisparo(float t) { this.intervaloDisparoEnemigos = t; }
     
     @Override
     public String toString() 

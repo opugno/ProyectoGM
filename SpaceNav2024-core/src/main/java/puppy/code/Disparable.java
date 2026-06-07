@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * Interfaz donde se marca que un objeto puede disparar
  * Esta la implementan Nave4, EnemigoElite, Boss
  */
-public class Disparable 
+public interface Disparable 
 {
 	/**
      * Ejecuta el disparo usando la estrategia actual.

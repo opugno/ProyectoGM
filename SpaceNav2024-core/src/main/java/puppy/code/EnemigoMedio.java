@@ -10,9 +10,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
  * Enemigo medio: 30 puntos, 2 vidas, dispara hacia abajo cada 3 segundos.
  * Drop: Upgrade de disparo (20% chance).
  */
-public class EnemigoMedio extends Enemigo 
+public class EnemigoMedio extends Enemigo implements Disparable
 {
- 
+	private EstrategiaDisparo estrategiaDisparo;
     public EnemigoMedio(float x, float y, Texture tx, Texture txBala) 
     {
         spr              = new Sprite(tx);
@@ -23,6 +23,7 @@ public class EnemigoMedio extends Enemigo
         intervaloDisparo = 3.0f; // dispara cada 3 segundos
         chanceDrop       = 20;   // porcentaje de un upgrade de disparo
         this.txBala      = txBala;
+        estrategiaDisparo = new DisparoSimple();
     }
  
     // Template Method: movimiento lateral mas una oscilacion
@@ -39,8 +40,20 @@ public class EnemigoMedio extends Enemigo
         float cx = spr.getX() + spr.getWidth() / 2;
         float cy = spr.getY();
         //disparo simple hacia abajo
-        EstrategiaDisparo estrategia = new DisparoSimple();
-        listaBalas.addAll(estrategia.crear(cx, cy, txBala, true));
+        listaBalas.addAll(estrategiaDisparo.crear(cx, cy, cy, txBala, true));
+    }
+    
+    // Implementa Disparable
+    @Override
+    public void disparar(ArrayList<Bullet> listaBalas) 
+    {
+          dispararEnemigo(listaBalas);
+    }
+    
+    @Override
+    public void setEstrategiaDisparo(EstrategiaDisparo estrategia)
+    {
+    	this.estrategiaDisparo = estrategia;
     }
  
     @Override

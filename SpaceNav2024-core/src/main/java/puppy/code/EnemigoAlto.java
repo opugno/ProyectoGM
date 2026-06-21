@@ -50,7 +50,7 @@ public class EnemigoAlto extends Enemigo implements Disparable
         if (txBala == null) return;
         float cx = spr.getX() + spr.getWidth() / 2;
         float cy = spr.getY();
-        listaBalas.addAll(estrategiaDisparo.crear(cx, cy, txBala, true));
+        listaBalas.addAll(estrategiaDisparo.crear(cx, cy, cy, txBala, true));
     }
  
     // Implementa DISPARABLE

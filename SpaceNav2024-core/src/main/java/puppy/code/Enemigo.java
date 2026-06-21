@@ -58,6 +58,20 @@ public abstract class Enemigo  extends GameObject
         }
     }
     
+    // En Enemigo.java - cambiar actualizarDisparo
+    public void acumularTiempoDisparo(float delta) {
+        if (intervaloDisparo <= 0) return;
+        tiempoDisparoAcum += delta;
+    }
+    
+    public boolean debeDisparar() {
+        return intervaloDisparo > 0 && tiempoDisparoAcum >= intervaloDisparo;
+    }
+    
+    public void resetTiempoDisparo() {
+        tiempoDisparoAcum = 0f;
+    }
+    
     /** Las subclases que disparan sobreescriben */
     protected void dispararEnemigo(ArrayList<Bullet> listaBalas) { }
     

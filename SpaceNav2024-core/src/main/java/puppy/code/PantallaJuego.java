@@ -338,7 +338,18 @@ public class PantallaJuego implements Screen
         {
             if (e.isDestroyed()) continue;
             e.actualizar();   // Template Method
-            e.actualizarDisparo(delta, balas);
+            //Usar la interfaz Disparable polimorficamente
+            if (e instanceof Disparable)
+            {
+            	e.acumularTiempoDisparo(delta);
+            	if (e.debeDisparar())
+            	{
+            		((Disparable) e).disparar(balas);
+            		e.resetTiempoDisparo();
+            	}
+            }
+            
+            
             e.dibujar(batch);
             // Colisin directa nave-enemigo
             nave.checkCollisionEnemigo(e);

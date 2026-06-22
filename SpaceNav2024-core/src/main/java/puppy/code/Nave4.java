@@ -21,42 +21,59 @@ import com.badlogic.gdx.math.Rectangle;
  *   SPACE         → disparar en la dirección que apunta
  *   E             → activar barra de poder
  *
- * Física: inercia real — la nave sigue moviéndose aunque no se presione UP.
- * El freno (DOWN) reduce la velocidad. Sin freno, se frena muy poco solo.
+ * Física de rotación:
+ *   La rotación usa un modelo de aceleración + amortiguación, igual que
+ *   el empuje lineal. Mantener LEFT/RIGHT acelera la rotación hasta
+ *   maxRotacion, y al soltar la tecla la nave decelera suavemente
+ *   gracias a dampRotacion. Esto elimina la sensación de giro brusco
+ *   del modelo anterior (velRotacion constante).
+ *
+ * Física lineal:
+ *   Inercia real — la nave sigue moviéndose aunque no se presione UP.
+ *   El freno (DOWN) reduce la velocidad. Sin freno, se frena muy poco solo.
  */
 public class Nave4 extends GameObject implements Disparable {
 
-    // ─── Rotación y física ───────────────────────────────────
-    private float rotacion     = 0f;    // grados; 0 = apunta arriba
-    private float velRotacion  = 3.5f;  // grados por frame al girar
-    private float aceleracion  = 0.22f; // empuje por frame
-    private float rozamiento   = 0.985f;// factor de frenado pasivo (1 = sin freno)
-    private float frenadoActivo= 0.90f; // factor al mantener DOWN
-    private float velMaxima    = 5.5f;  // píxeles/frame máximos
+    // ─── Rotación — modelo aceleración + amortiguación ────────────
+    /** Cuántos grados/frame se suma a vRot al mantener LEFT o RIGHT. */
+    private float acelRotacion  = 1.3f;
+    /** Factor de frenado pasivo de la rotación (0..1). 1 = sin freno. */
+    private float dampRotacion  = 0.84f;
+    /** Velocidad de rotación máxima en grados/frame. */
+    private float maxRotacion   = 6.0f;
+    /** Velocidad de rotación actual (acumulada). */
+    private float vRotacion     = 0f;
+    /** Ángulo actual de la nave en grados (0 = apunta arriba). */
+    private float rotacion      = 0f;
 
-    // ─── Estado ─────────────────────────────────────────────
-    private boolean herido       = false;
+    // ─── Física lineal ────────────────────────────────────────────
+    private float aceleracion   = 0.22f;
+    private float rozamiento    = 0.985f;
+    private float frenadoActivo = 0.90f;
+    private float velMaxima     = 5.5f;
+
+    // ─── Estado ──────────────────────────────────────────────────
+    private boolean herido          = false;
     private int     tiempoHeridoMax = 60;
     private int     tiempoHerido;
 
-    // ─── Audio / texturas ────────────────────────────────────
-    private Sound sonidoHerido;
-    private Sound soundBala;
+    // ─── Audio / texturas ─────────────────────────────────────────
+    private Sound   sonidoHerido;
+    private Sound   soundBala;
     private Texture txBala;
 
-    // ─── Strategy ────────────────────────────────────────────
+    // ─── Strategy ────────────────────────────────────────────────
     private EstrategiaDisparo estrategiaDisparo;
 
-    // ═══════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════
     // CONSTRUCTOR
-    // ═══════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════
     public Nave4(int x, int y, Texture tx, Sound soundChoque, Texture txBala, Sound soundBala) {
         sonidoHerido   = soundChoque;
         this.soundBala = soundBala;
         this.txBala    = txBala;
 
         spr = new Sprite(tx);
-        // setOriginCenter para que rote sobre su centro
         spr.setSize(45, 45);
         spr.setPosition(x, y);
         spr.setOriginCenter();
@@ -64,35 +81,55 @@ public class Nave4 extends GameObject implements Disparable {
         actualizarEstrategiaDisparo();
     }
 
-    // ═══════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════
     // TEMPLATE METHOD: mover()
-    // ═══════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════
     @Override
     protected void mover() {
         if (herido) return;
 
-        // ── Rotación ──────────────────────────
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT))  rotacion += velRotacion;
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) rotacion -= velRotacion;
+        // ── Rotación con aceleración + amortiguación ──────────────
+        //
+        // En lugar de sumar/restar velRotacion fija directamente a
+        // rotacion, ahora acumulamos en vRotacion y la amortiguamos
+        // cada frame. El resultado: girar acelera suavemente, y
+        // soltar la tecla desacelera en lugar de parar en seco.
+        //
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT))  vRotacion += acelRotacion;
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) vRotacion -= acelRotacion;
 
-        // ── Empuje hacia donde apunta ─────────
+        // Amortiguación: reduce vRotacion cada frame aunque se siga
+        // presionando (limita la velocidad máxima orgánicamente).
+        vRotacion *= dampRotacion;
+
+        // Clampear por si dampRotacion deja un margen pequeño
+        vRotacion = MathUtils.clamp(vRotacion, -maxRotacion, maxRotacion);
+
+        // Aplicar al ángulo acumulado
+        rotacion += vRotacion;
+
+        // ── Empuje lineal ─────────────────────────────────────────
+        // Se suma 90° porque LibGDX setRotation() parte del eje X
+        // (derecha = 0°) pero el sprite apunta hacia arriba visualmente.
+        // Sin el offset, UP empuja a la derecha cuando la nave está
+        // sin rotar. Con +90° el empuje coincide con la punta del sprite.
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            float rad = MathUtils.degreesToRadians * rotacion;
-            xVel +=  MathUtils.sin(rad) * aceleracion;
-            yVel +=  MathUtils.cos(rad) * aceleracion;
+            float rad = MathUtils.degreesToRadians * (rotacion + 90f);
+            xVel +=  MathUtils.cos(rad) * aceleracion;
+            yVel +=  MathUtils.sin(rad) * aceleracion;
         }
 
-        // ── Freno activo ──────────────────────
+        // ── Freno activo ──────────────────────────────────────────
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             xVel *= frenadoActivo;
             yVel *= frenadoActivo;
         }
 
-        // ── Rozamiento pasivo (inercia suave) ─
+        // ── Rozamiento pasivo ─────────────────────────────────────
         xVel *= rozamiento;
         yVel *= rozamiento;
 
-        // ── Limitar velocidad máxima ──────────
+        // ── Limitar velocidad lineal máxima ───────────────────────
         float speed = (float) Math.sqrt(xVel * xVel + yVel * yVel);
         if (speed > velMaxima) {
             float factor = velMaxima / speed;
@@ -100,29 +137,27 @@ public class Nave4 extends GameObject implements Disparable {
             yVel *= factor;
         }
 
-        // ── Mover el sprite ───────────────────
+        // ── Mover sprite ──────────────────────────────────────────
         float nx = spr.getX() + xVel;
         float ny = spr.getY() + yVel;
 
         // Wrap-around: sale por un borde, aparece por el opuesto
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
-        if (nx + spr.getWidth()  < 0) nx = w;
+        if (nx + spr.getWidth()  < 0) nx =  w;
         if (nx > w)                   nx = -spr.getWidth();
-        if (ny + spr.getHeight() < 0) ny = h;
+        if (ny + spr.getHeight() < 0) ny =  h;
         if (ny > h)                   ny = -spr.getHeight();
 
         spr.setPosition(nx, ny);
-
-        // Aplicar rotación visual
         spr.setRotation(rotacion);
     }
 
-    // ═══ Hook: no destruye al salir de pantalla — hace wrap ═══
+    // ═══ Hook: wrap-around manejado en mover(), no destruir ═══════
     @Override
-    protected void verificarBordes() { /* manejado en mover() con wrap */ }
+    protected void verificarBordes() { /* wrap en mover() */ }
 
-    // ═══ Hook: temblor al recibir daño ═══
+    // ═══ Hook: temblor al recibir daño ════════════════════════════
     @Override
     protected void efectoAdicional() {
         if (herido) {
@@ -132,11 +167,11 @@ public class Nave4 extends GameObject implements Disparable {
         }
     }
 
-    // ═══════════════════════════════════════════════
-    // DRAW — ejecuta Template Method + disparo
-    // ═══════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════
+    // DRAW — Template Method + disparo
+    // ═══════════════════════════════════════════════════════════════
     public void draw(SpriteBatch batch, PantallaJuego juego) {
-        actualizar(); // Template Method: mover → verificarBordes → efectoAdicional
+        actualizar(); // mover → verificarBordes → efectoAdicional
         spr.draw(batch);
 
         // Disparo con SPACE
@@ -155,20 +190,20 @@ public class Nave4 extends GameObject implements Disparable {
         }
     }
 
-    // ═══════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════
     // DISPARABLE — Strategy Pattern
-    // ═══════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════
     @Override
     public void disparar(ArrayList<Bullet> listaBalas) {
         if (txBala == null) return;
 
-        // Punto de spawn: punta del sprite en la dirección que apunta
-        float rad = MathUtils.degreesToRadians * rotacion;
-        float cx  = spr.getX() + spr.getWidth()  / 2f;
-        float cy  = spr.getY() + spr.getHeight() / 2f;
-        // Desplazar hacia la punta de la nave (la mitad del alto en esa dirección)
-        float spawnX = cx + MathUtils.sin(rad) * (spr.getHeight() / 2f - 2f);
-        float spawnY = cy + MathUtils.cos(rad) * (spr.getHeight() / 2f - 2f);
+        // Mismo offset +90° que el empuje para que las balas salgan
+        // por la punta visual del sprite.
+        float rad    = MathUtils.degreesToRadians * (rotacion + 90f);
+        float cx     = spr.getX() + spr.getWidth()  / 2f;
+        float cy     = spr.getY() + spr.getHeight() / 2f;
+        float spawnX = cx + MathUtils.cos(rad) * (spr.getHeight() / 2f - 2f);
+        float spawnY = cy + MathUtils.sin(rad) * (spr.getHeight() / 2f - 2f);
 
         ArrayList<Bullet> nuevas = estrategiaDisparo.crear(spawnX, spawnY, rotacion, txBala, false);
 
@@ -197,10 +232,9 @@ public class Nave4 extends GameObject implements Disparable {
         }
     }
 
-    // ═══════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════
     // COLISIONES
-    // ═══════════════════════════════════════════════
-
+    // ═══════════════════════════════════════════════════════════════
     public boolean checkCollisionEnemigo(Enemigo e) {
         if (herido || e.isDestroyed()) return false;
         if (e.getArea().overlaps(spr.getBoundingRectangle())) {
@@ -238,13 +272,21 @@ public class Nave4 extends GameObject implements Disparable {
         if (muerta) destroyed = true;
     }
 
-    // ═══════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════
     // GETTERS
-    // ═══════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════
     public boolean estaDestruido() { return !herido && destroyed; }
     public boolean estaHerido()    { return herido; }
     public int     getVidas()      { return GameManager.getInstance().getVidas(); }
     public void    setVidas(int v) { /* legacy */ }
     public float   getRotacion()   { return rotacion; }
     public Rectangle getArea()     { return spr.getBoundingRectangle(); }
+
+    // ── Getters/setters de física de rotación (para tuning en runtime) ──
+    public float getAcelRotacion()          { return acelRotacion; }
+    public void  setAcelRotacion(float v)   { acelRotacion = v; }
+    public float getDampRotacion()          { return dampRotacion; }
+    public void  setDampRotacion(float v)   { dampRotacion = v; }
+    public float getMaxRotacion()           { return maxRotacion; }
+    public void  setMaxRotacion(float v)    { maxRotacion = v; }
 }

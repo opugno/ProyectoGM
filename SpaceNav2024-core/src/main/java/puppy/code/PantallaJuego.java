@@ -101,23 +101,23 @@ public class PantallaJuego implements Screen
         iniciarNivel();
     }
     
-    private void cargarTexturas() 
-    {
+    private void cargarTexturas() {
         txNavePrincipal  = new Texture(Gdx.files.internal("MainShip3.png"));
-        txBalaJugador = new Texture(Gdx.files.internal("Rocket2.png"));
-        txBalaEnemigo = new Texture(Gdx.files.internal("Rocket2.png")); // PORMIENTRAS
-        txEnemBasico = new Texture(Gdx.files.internal("aGreySmall.png"));
-        txEnemMedio = new Texture(Gdx.files.internal("aGreyMedium4.png"));
-        txEnemElite = new Texture(Gdx.files.internal("aGreyLarge.png"));
-        txBoss = new Texture(Gdx.files.internal("aGreyLarge.png")); // PORMIENTRAS
-        // Powerups: usar un placeholder REEMPLAZAR MAS TARDE CON SPRITS REALES
-        txPowerUpDisparo = new Texture(Gdx.files.internal("Rocket2.png"));
-        txPowerUpEscudo = new Texture(Gdx.files.internal("Rocket2.png"));
-        txPowerUpFuerte = new Texture(Gdx.files.internal("Rocket2.png"));
-        txPowerUpEspecial = new Texture(Gdx.files.internal("Rocket2.png"));
-        txPowerUpVida = new Texture(Gdx.files.internal("Rocket2.png"));
-        txPowerUps = new Texture[]{ txPowerUpDisparo, txPowerUpEscudo,
-                                     txPowerUpFuerte, txPowerUpEspecial, txPowerUpVida };
+        txBalaJugador    = new Texture(Gdx.files.internal("Rocket2.png"));
+        txBalaEnemigo    = new Texture(Gdx.files.internal("BulletEnemy.png"));
+        txEnemBasico     = new Texture(Gdx.files.internal("enemigo_basico.png"));  // ← nuevo
+        txEnemMedio      = new Texture(Gdx.files.internal("enemigo_medio.png"));   // ← nuevo
+        txEnemElite      = new Texture(Gdx.files.internal("enemigo_elite.png"));   // ← nuevo
+        txBoss           = new Texture(Gdx.files.internal("boss_nave.png"));            // ← nuevo
+        txPowerUpDisparo  = new Texture(Gdx.files.internal("powerup_disparo.png"));     // ← nuevo
+        txPowerUpEscudo   = new Texture(Gdx.files.internal("powerup_escudo.png"));      // ← nuevo
+        txPowerUpFuerte   = new Texture(Gdx.files.internal("pu_fuerte.png"));
+        txPowerUpEspecial = new Texture(Gdx.files.internal("pu_laser.png"));
+        txPowerUpVida     = new Texture(Gdx.files.internal("pu_vida.png"));
+        txPowerUps = new Texture[]{
+            txPowerUpDisparo, txPowerUpEscudo,
+            txPowerUpFuerte,  txPowerUpEspecial, txPowerUpVida
+        };
     }
     
     /** Crea los enemigos segun la configuracion del nivel actual. */

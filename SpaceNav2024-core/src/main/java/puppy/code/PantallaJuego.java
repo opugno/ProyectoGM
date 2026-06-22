@@ -53,7 +53,7 @@ public class PantallaJuego implements Screen
     private float velFormY;          // velocidad de bajada al rebotar
     private boolean formBajando = false;
     private float bajadaRestante = 0f;
-    private static final float BAJADA = 20f; // px que baja al rebotar
+    private static final float BAJADA = 12f; // px que baja al rebotar
     
     //TEXTURAS
     private Texture txNavePrincipal, txBalaJugador, txBalaEnemigo;
@@ -129,7 +129,7 @@ public class PantallaJuego implements Screen
         boss = null;
  
         nivelConfig = nivelDirector.crearNivel(gm.getNivelActual());
-        velFormX = nivelConfig.getVelocidadBase();
+        velFormX = Math.min(nivelConfig.getVelocidadBase(), 3);
         velFormY = 0;
  
         colocarFormacion();
@@ -256,9 +256,9 @@ public class PantallaJuego implements Screen
         {
             velFormX *= -1;
             // Bajar la formacion
-            for (Enemigo e : enemigos) 
+            for (Enemigo e : enemigos)
             {
-                if (!e.isDestroyed() && !(e instanceof Boss)) 
+                if (!e.isDestroyed() && !(e instanceof Boss))
                 {
                     e.setVelFormacion(velFormX, -BAJADA);
                 }
